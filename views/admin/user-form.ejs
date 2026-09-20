@@ -1,0 +1,38 @@
+<%- include('../partials/header') %><a href="/admin/users" class="back-link">← Danh sách nhân viên</a>
+<div class="page-heading">
+  <h1><%= title %></h1>
+  <p>
+    <%= editing ? 'Để trống mật khẩu nếu muốn giữ mật khẩu hiện tại.' : 'Tạo tài khoản để nhân viên đăng nhập và tiếp nhận cứu hộ.' %>
+  </p>
+</div>
+<form class="panel management-form" method="post"
+  action="<%= editing ? '/admin/users/' + values.MaTaiKhoan + '/edit' : '/admin/users' %>"><input
+    type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="row g-3">
+    <div class="col-md-6"><label class="form-label" for="HoTen">Họ tên *</label><input class="form-control"
+        id="HoTen" name="HoTen" maxlength="100" value="<%= values.HoTen || '' %>" required></div>
+    <div class="col-md-6"><label class="form-label" for="SoDienThoai">Số điện thoại *</label><input
+        class="form-control" id="SoDienThoai" name="SoDienThoai" type="tel" pattern="(0[0-9]{9}|\+84[0-9]{9})"
+        value="<%= values.SoDienThoai || '' %>" required></div>
+    <div class="col-md-6"><label class="form-label" for="TenDangNhap">Tên đăng nhập *</label><input
+        class="form-control" id="TenDangNhap" name="TenDangNhap" pattern="[A-Za-z0-9_.]{3,50}" minlength="3"
+        maxlength="50" autocomplete="off" value="<%= values.TenDangNhap || '' %>" required></div>
+    <div class="col-md-6"><label class="form-label" for="MatKhau">Mật khẩu
+        <%= editing ? 'mới' : '*' %></label><input class="form-control" id="MatKhau" name="MatKhau"
+        type="password" minlength="8" maxlength="72" autocomplete="new-password"
+        <%= editing ? '' : 'required' %>>
+      <div class="form-text">Tối thiểu 8 ký tự, tối đa 72 byte.</div>
+    </div>
+    <div class="col-md-6"><label class="form-label" for="VaiTro">Vai trò</label><select class="form-select"
+        id="VaiTro" name="VaiTro">
+        <option value="nhanvien">Nhân viên cứu hộ</option>
+      </select></div>
+    <div class="col-md-6"><label class="form-label" for="TrangThai">Trạng thái</label><select
+        class="form-select" id="TrangThai" name="TrangThai">
+        <option value="HoatDong" <%= values.TrangThai !== 'Khoa' ? 'selected' : '' %>>Hoạt động</option>
+        <option value="Khoa" <%= values.TrangThai === 'Khoa' ? 'selected' : '' %>>Khóa</option>
+      </select></div>
+  </div>
+  <div class="mt-4 d-flex gap-2"><button class="btn btn-rescue">Lưu nhân viên</button><a href="/admin/users"
+      class="btn btn-outline-secondary">Hủy</a></div>
+</form><%- include('../partials/footer') %>

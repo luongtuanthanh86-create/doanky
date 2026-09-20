@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title><%= title %> · Cứu Hộ Việt</title>
+    <meta name="description" content="Gửi yêu cầu cứu hộ giao thông kèm vị trí và tra cứu tiến độ xử lý.">
+    <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/vendor/leaflet/leaflet.js" defer></script>
+    <script src="/js/app.js?v=20260915-2" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Đến nội dung chính</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="brand"><span class="brand-mark" aria-hidden="true">+</span><span>CỨU HỘ
+            <b>VIỆT</b><small>HỖ TRỢ GIAO THÔNG</small></span></a>
+        <nav aria-label="Điều hướng chính" class="main-nav">
+          <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Yêu cầu cứu hộ</a>
+          <a href="/tracking" class="<%= currentPath === '/tracking' ? 'active' : '' %>">Tra cứu yêu cầu</a>
+          <% if (user) { %><a href="/<%= user.vaiTro === 'admin' ? 'admin' : 'staff' %>/dashboard"
+            class="nav-login">Không gian làm việc ↗</a>
+          <% } else { %><a href="/login" class="nav-login">Đăng nhập nhân viên ↗</a><% } %>
+        </nav>
+      </div>
+    </header>
+    <main id="main" class="container page-main">
+      <% if (user && (currentPath.startsWith('/admin') || currentPath.startsWith('/staff'))) { const base = user.vaiTro === 'admin' ? '/admin' : '/staff'; %>
+      <div class="workspace-nav">
+        <div class="workspace-links"><a href="<%= base %>/dashboard"
+            class="<%= currentPath.endsWith('/dashboard') ? 'selected' : '' %>">Tổng quan</a><a
+            href="<%= base %>/requests" class="<%= currentPath.includes('/requests') ? 'selected' : '' %>">Yêu
+            cầu cứu hộ</a>
+          <% if (user.vaiTro === 'admin') { %><a href="/admin/users"
+            class="<%= currentPath.includes('/users') ? 'selected' : '' %>">Nhân viên</a><a
+            href="/admin/incident-types"
+            class="<%= currentPath.includes('/incident-types') ? 'selected' : '' %>">Loại sự cố</a><% } %>
+        </div>
+        <div class="account-menu"><span><%= user.hoTen %></span>
+          <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button
+              class="btn btn-sm btn-outline-secondary">Đăng xuất</button></form>
+        </div>
+      </div>
+      <% } %>
+      <% if (flash) { %><div class="alert alert-success" role="status"><%= flash %></div><% } %>
+      <% if (errors.length) { %><div class="alert alert-danger" role="alert"><strong>Vui lòng kiểm tra lại
+          thông tin:</strong>
+        <ul class="mb-0 mt-2"><% errors.forEach(error => { %><li><%= error %></li><% }) %></ul>
+      </div><% } %>

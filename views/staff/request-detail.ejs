@@ -1,0 +1,16 @@
+<%- include('../partials/header') %><a href="/staff/requests" class="back-link">← Danh sách yêu
+  cầu</a><%- include('../partials/request-info') %>
+<div class="action-bar"><% if (request.TrangThai === 'ChoTiepNhan') { %><p>Yêu cầu đang chờ nhân viên tiếp
+    nhận.</p>
+  <form method="post" action="/staff/requests/<%= request.MaYeuCau %>/accept"><input type="hidden"
+      name="_csrf" value="<%= csrf %>"><button class="btn btn-rescue">Tiếp nhận yêu cầu →</button></form>
+  <% } else if (request.TrangThai === 'HoanThanh') { %><p class="text-success mb-0">✓ Yêu cầu đã hoàn thành.
+  </p><% } else if (request.MaNhanVien === user.id) { %><p>Bạn đang phụ trách yêu cầu này.</p>
+  <form method="post" action="/staff/requests/<%= request.MaYeuCau %>/status"><input type="hidden"
+      name="_csrf" value="<%= csrf %>"><input type="hidden" name="status"
+      value="<%= nextStatus[request.TrangThai] %>"><button
+      class="btn btn-rescue"><%= request.TrangThai === 'DaTiepNhan' ? 'Bắt đầu xử lý' : 'Hoàn thành' %>
+      →</button></form><% } else { %><p class="mb-0">Nhân viên <strong><%= request.TenNhanVien %></strong>
+    đang phụ trách yêu cầu này.</p><% } %>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,20 @@
+<%- include('../partials/header') %><a href="/admin/incident-types" class="back-link">← Danh sách loại sự
+  cố</a>
+<div class="page-heading">
+  <h1><%= title %></h1>
+</div>
+<form class="panel management-form" method="post"
+  action="<%= editing ? '/admin/incident-types/' + values.MaLoai + '/edit' : '/admin/incident-types' %>">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="mb-3"><label for="TenLoai" class="form-label">Tên loại sự cố *</label><input
+      class="form-control" id="TenLoai" name="TenLoai" maxlength="100" value="<%= values.TenLoai || '' %>"
+      required></div>
+  <div class="mb-3"><label for="MoTa" class="form-label">Mô tả</label><textarea class="form-control" id="MoTa"
+      name="MoTa" rows="3" maxlength="255"><%= values.MoTa || '' %></textarea></div>
+  <div class="mb-4"><label for="TrangThai" class="form-label">Trạng thái</label><select class="form-select"
+      id="TrangThai" name="TrangThai">
+      <option value="HoatDong" <%= values.TrangThai !== 'Khoa' ? 'selected' : '' %>>Hoạt động</option>
+      <option value="Khoa" <%= values.TrangThai === 'Khoa' ? 'selected' : '' %>>Khóa</option>
+    </select></div><button class="btn btn-rescue">Lưu loại sự cố</button><a href="/admin/incident-types"
+    class="btn btn-outline-secondary ms-2">Hủy</a>
+</form><%- include('../partials/footer') %>

@@ -1,0 +1,21 @@
+<%- include('partials/header') %>
+<div class="login-layout">
+  <section class="login-intro">
+    <p class="eyebrow">KHÔNG GIAN LÀM VIỆC</p>
+    <h1>Sẵn sàng hỗ trợ<br>một hành trình<br><span>tiếp tục.</span></h1>
+    <p>Đăng nhập để tiếp nhận yêu cầu và cập nhật tiến độ cứu hộ.</p><a href="/">← Quay lại trang cứu hộ</a>
+  </section>
+  <section class="panel login-panel"><span class="step-number mb-3" aria-hidden="true">↗</span>
+    <h2>Đăng nhập</h2>
+    <p class="text-secondary mb-4">Dành cho nhân viên và quản trị viên</p>
+    <form method="post" action="/login"><input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="mb-3"><label for="username" class="form-label">Tên đăng nhập</label><input id="username"
+          name="username" class="form-control" autocomplete="username" minlength="3" maxlength="50"
+          pattern="[A-Za-z0-9_.]{3,50}" value="<%= values.username || '' %>" required></div>
+      <div class="mb-4"><label for="password" class="form-label">Mật khẩu</label><input id="password"
+          name="password" type="password" class="form-control" autocomplete="current-password" required></div>
+      <button class="btn btn-rescue w-100">Đăng nhập →</button>
+    </form>
+  </section>
+</div>
+<%- include('partials/footer') %>

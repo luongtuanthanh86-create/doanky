@@ -1,0 +1,44 @@
+<%- include('../partials/header') %><div class="page-heading heading-with-action">
+  <div>
+    <p class="eyebrow">QUẢN LÝ ĐỘI NGŨ</p>
+    <h1>Nhân viên cứu hộ</h1>
+    <p><%= accounts.length %> tài khoản nhân viên</p>
+  </div><a href="/admin/users/new" class="btn btn-rescue">+ Thêm nhân viên</a>
+</div>
+<section class="panel table-panel">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Họ tên</th>
+          <th>Số điện thoại</th>
+          <th>Tên đăng nhập</th>
+          <th>Vai trò</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody><% if (!accounts.length) { %><tr>
+          <td colspan="6" class="text-center py-5">Chưa có nhân viên. Hãy thêm tài khoản đầu tiên.</td>
+        </tr><% } %><% accounts.forEach(account => { %><tr>
+          <td><strong><%= account.HoTen %></strong></td>
+          <td><%= account.SoDienThoai %></td>
+          <td><%= account.TenDangNhap %></td>
+          <td>Nhân viên</td>
+          <td><span
+              class="status-badge <%= account.TrangThai === 'HoatDong' ? 'status-HoanThanh' : 'status-ChoTiepNhan' %>"><%= account.TrangThai === 'HoatDong' ? 'Hoạt động' : 'Đã khóa' %></span>
+          </td>
+          <td>
+            <div class="table-actions"><a href="/admin/users/<%= account.MaTaiKhoan %>/edit"
+                class="btn btn-sm btn-outline-secondary">Sửa</a>
+              <form method="post" action="/admin/users/<%= account.MaTaiKhoan %>/status"><input type="hidden"
+                  name="_csrf" value="<%= csrf %>"><input type="hidden" name="status"
+                  value="<%= account.TrangThai === 'HoatDong' ? 'Khoa' : 'HoatDong' %>"><button
+                  class="btn btn-sm btn-outline-secondary"><%= account.TrangThai === 'HoatDong' ? 'Khóa' : 'Mở khóa' %></button>
+              </form>
+            </div>
+          </td>
+        </tr><% }) %></tbody>
+    </table>
+  </div>
+</section><%- include('../partials/footer') %>

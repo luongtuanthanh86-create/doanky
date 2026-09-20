@@ -1,0 +1,52 @@
+<div class="detail-heading">
+  <div>
+    <p class="eyebrow">THÔNG TIN YÊU CẦU</p>
+    <h1>Yêu cầu #<%= request.MaYeuCau %></h1>
+  </div><span class="status-badge status-<%= request.TrangThai %>"><%= statuses[request.TrangThai] %></span>
+</div>
+<ol class="status-timeline">
+  <% Object.keys(statuses).forEach((status, index) => { const active = Object.keys(statuses).indexOf(request.TrangThai) >= index; %>
+  <li class="<%= active ? 'reached' : '' %>" <%- request.TrangThai === status ? 'aria-current="step"' : '' %>>
+    <span><%= index + 1 %></span><%= statuses[status] %></li><% }) %></ol>
+<div class="row g-4">
+  <div class="col-lg-6">
+    <section class="panel detail-panel">
+      <h2>Khách hàng & phương tiện</h2>
+      <dl class="info-list">
+        <dt>Họ và tên</dt>
+        <dd><%= request.HoTen %></dd>
+        <dt>Số điện thoại</dt>
+        <dd><%= request.SoDienThoai %></dd>
+        <dt>Loại phương tiện</dt>
+        <dd><%= request.LoaiXe %></dd>
+        <dt>Biển số</dt>
+        <dd><%= request.BienSo || 'Chưa cung cấp' %></dd>
+        <dt>Loại sự cố</dt>
+        <dd><%= request.TenLoai %></dd>
+        <dt>Mô tả</dt>
+        <dd class="preserve-lines"><%= request.MoTa || 'Không có mô tả' %></dd>
+      </dl>
+      <hr>
+      <h2>Thông tin xử lý</h2>
+      <dl class="info-list">
+        <dt>Nhân viên phụ trách</dt>
+        <dd><%= request.TenNhanVien || 'Chưa có nhân viên tiếp nhận' %></dd>
+        <dt>Thời gian gửi</dt>
+        <dd><%= formatDate(request.ThoiGianGui) %></dd>
+        <dt>Cập nhật gần nhất</dt>
+        <dd><%= formatDate(request.ThoiGianCapNhat) %></dd>
+      </dl>
+    </section>
+  </div>
+  <div class="col-lg-6">
+    <section class="panel detail-panel">
+      <h2>Vị trí sự cố</h2>
+      <div id="map" class="map detail-map" data-mode="view" data-lat="<%= request.ViDo %>"
+        data-lng="<%= request.KinhDo %>" aria-label="Bản đồ vị trí sự cố"></div>
+      <p class="coordinates">Vĩ độ: <%= request.ViDo %> · Kinh độ: <%= request.KinhDo %></p>
+      <p id="location-message" role="status"></p><a class="btn btn-location"
+        href="https://www.google.com/maps?q=<%= request.ViDo %>,<%= request.KinhDo %>" target="_blank"
+        rel="noopener noreferrer">Mở Google Maps ↗</a>
+    </section>
+  </div>
+</div>

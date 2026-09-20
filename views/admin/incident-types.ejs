@@ -1,0 +1,42 @@
+<%- include('../partials/header') %><div class="page-heading heading-with-action">
+  <div>
+    <p class="eyebrow">DANH MỤC HỖ TRỢ</p>
+    <h1>Loại sự cố</h1>
+    <p>Loại bị khóa không xuất hiện trong biểu mẫu yêu cầu mới.</p>
+  </div><a href="/admin/incident-types/new" class="btn btn-rescue">+ Thêm loại sự cố</a>
+</div>
+<section class="panel table-panel">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Mã</th>
+          <th>Tên loại sự cố</th>
+          <th>Mô tả</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody><% if (!types.length) { %><tr>
+          <td colspan="5" class="text-center py-5">Chưa có loại sự cố.</td>
+        </tr><% } %><% types.forEach(type => { %><tr>
+          <td>#<%= type.MaLoai %></td>
+          <td><strong><%= type.TenLoai %></strong></td>
+          <td><%= type.MoTa || '—' %></td>
+          <td><span
+              class="status-badge <%= type.TrangThai === 'HoatDong' ? 'status-HoanThanh' : 'status-ChoTiepNhan' %>"><%= type.TrangThai === 'HoatDong' ? 'Hoạt động' : 'Đã khóa' %></span>
+          </td>
+          <td>
+            <div class="table-actions"><a href="/admin/incident-types/<%= type.MaLoai %>/edit"
+                class="btn btn-sm btn-outline-secondary">Sửa</a>
+              <form method="post" action="/admin/incident-types/<%= type.MaLoai %>/status"><input
+                  type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status"
+                  value="<%= type.TrangThai === 'HoatDong' ? 'Khoa' : 'HoatDong' %>"><button
+                  class="btn btn-sm btn-outline-secondary"><%= type.TrangThai === 'HoatDong' ? 'Khóa' : 'Mở khóa' %></button>
+              </form>
+            </div>
+          </td>
+        </tr><% }) %></tbody>
+    </table>
+  </div>
+</section><%- include('../partials/footer') %>

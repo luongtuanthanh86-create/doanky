@@ -1,0 +1,95 @@
+<%- include('partials/header') %>
+<section class="intro">
+  <div>
+    <p class="eyebrow">HỖ TRỢ TRÊN MỌI HÀNH TRÌNH</p>
+    <h1>Gặp sự cố?<br><span>Gửi vị trí, nhận hỗ trợ.</span></h1>
+    <p class="intro-copy">Cho chúng tôi biết sự cố và vị trí của bạn.<br>Nhân viên cứu hộ sẽ tiếp nhận và hỗ
+      trợ xử lý.</p>
+  </div>
+  <div class="process-summary"><span><b>01</b> Gửi yêu cầu</span><span><b>02</b> Nhân viên tiếp
+      nhận</span><span><b>03</b> Theo dõi xử lý</span></div>
+</section>
+<form method="post" action="/requests" class="request-grid" id="rescue-form">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <section class="panel form-panel">
+    <div class="section-heading"><span class="step-number">01</span>
+      <div>
+        <h2>Thông tin cứu hộ</h2>
+        <p>Các trường có dấu * là bắt buộc</p>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-sm-6"><label for="HoTen" class="form-label">Họ và tên *</label><input id="HoTen"
+          name="HoTen" class="form-control" placeholder="Nhập họ và tên" autocomplete="name" maxlength="100"
+          value="<%= values.HoTen || '' %>" required></div>
+      <div class="col-sm-6"><label for="SoDienThoai" class="form-label">Số điện thoại *</label><input
+          id="SoDienThoai" name="SoDienThoai" class="form-control" type="tel" autocomplete="tel"
+          placeholder="09xxxxxxxx" pattern="(0[0-9]{9}|\+84[0-9]{9})" maxlength="15"
+          value="<%= values.SoDienThoai || '' %>" required></div>
+      <div class="col-sm-6"><label for="LoaiXe" class="form-label">Loại phương tiện *</label><select
+          id="LoaiXe" name="LoaiXe" class="form-select" required>
+          <option value="">Chọn phương tiện</option><% vehicles.forEach(vehicle => { %><option
+            <%= values.LoaiXe === vehicle ? 'selected' : '' %>><%= vehicle %></option><% }) %>
+        </select></div>
+      <div class="col-sm-6"><label for="BienSo" class="form-label">Biển số xe</label><input id="BienSo"
+          name="BienSo" class="form-control" placeholder="Ví dụ: 59-A1 123.45" maxlength="20"
+          value="<%= values.BienSo || '' %>"></div>
+      <div class="col-12"><label for="MaLoai" class="form-label">Bạn đang gặp sự cố gì? *</label><select
+          id="MaLoai" name="MaLoai" class="form-select" required>
+          <option value="">Chọn loại sự cố</option><% types.forEach(type => { %><option
+            value="<%= type.MaLoai %>" <%= String(values.MaLoai) === String(type.MaLoai) ? 'selected' : '' %>>
+            <%= type.TenLoai %></option><% }) %>
+        </select></div>
+      <div class="col-12"><label for="MoTa" class="form-label">Mô tả thêm</label><textarea id="MoTa"
+          name="MoTa" class="form-control" rows="3" maxlength="2000"
+          placeholder="Tình trạng xe, đặc điểm vị trí để dễ tìm bạn…"><%= values.MoTa || '' %></textarea>
+      </div>
+    </div>
+    <div class="submit-area"><button class="btn btn-rescue w-100" type="submit"
+        <%= !types.length ? 'disabled' : '' %>>Gửi yêu cầu cứu hộ <span aria-hidden="true">→</span></button>
+      <p>
+        <%= types.length ? 'Không cần tài khoản. Tra cứu bằng số điện thoại đã gửi.' : 'Chưa có loại sự cố đang hoạt động. Vui lòng quay lại sau.' %>
+      </p>
+    </div>
+  </section>
+  <section class="panel location-panel">
+    <div class="section-heading"><span class="step-number">02</span>
+      <div>
+        <h2>Vị trí của bạn *</h2>
+        <p>Lấy GPS hoặc chạm vào bản đồ để chọn vị trí</p>
+      </div>
+    </div>
+    <div class="map-wrap">
+      <div id="map" class="map home-map" data-mode="pick"
+        data-lat="<%= coordinate(values.ViDo,-90,90) ? values.ViDo : '' %>"
+        data-lng="<%= coordinate(values.KinhDo,-180,180) ? values.KinhDo : '' %>"
+        aria-label="Bản đồ chọn vị trí cứu hộ"></div>
+    </div>
+    <div class="location-controls"><button type="button" class="btn btn-location w-100"
+        id="locate-button"><span aria-hidden="true">⌖</span> Lấy vị trí hiện tại</button>
+      <p id="location-message" class="location-message" role="status" aria-live="polite">Chưa chọn vị trí. Bạn
+        có thể nhập tọa độ bên dưới.</p>
+      <details class="mb-3">
+        <summary>Kiểm tra lỗi định vị</summary>
+        <p class="small text-secondary mt-2">Nếu chưa lấy được vị trí, gửi nội dung bên dưới để kiểm tra đúng nguyên nhân.</p>
+        <pre id="location-diagnostics" class="small text-wrap" aria-live="polite">JavaScript chưa tải xong. Nếu dòng này không thay đổi, hãy nhấn Ctrl+F5 và kiểm tra bạn đã chạy website bằng Node.js.</pre>
+        <noscript><p class="text-danger">Trình duyệt đang tắt JavaScript. Cần bật JavaScript để dùng nút lấy vị trí.</p></noscript>
+      </details>
+      <div class="row g-3">
+        <div class="col-6"><label class="form-label" for="ViDo">Vĩ độ *</label><input type="number" step="any"
+            min="-90" max="90" id="ViDo" name="ViDo" class="form-control" placeholder="10.776900"
+            value="<%= coordinate(values.ViDo,-90,90) ? values.ViDo : '' %>" required></div>
+        <div class="col-6"><label class="form-label" for="KinhDo">Kinh độ *</label><input type="number"
+            step="any" min="-180" max="180" id="KinhDo" name="KinhDo" class="form-control"
+            placeholder="106.700900" value="<%= coordinate(values.KinhDo,-180,180) ? values.KinhDo : '' %>"
+            required></div>
+      </div>
+      <div class="location-note">Kiểm tra marker đúng nơi xe đang dừng trước khi gửi yêu cầu.</div>
+    </div>
+  </section>
+</form>
+<div class="tracking-strip">
+  <div><strong>Đã gửi yêu cầu cứu hộ?</strong><span>Chỉ cần số điện thoại để xem trạng thái mới
+      nhất.</span></div><a href="/tracking">Tra cứu yêu cầu →</a>
+</div>
+<%- include('partials/footer') %>

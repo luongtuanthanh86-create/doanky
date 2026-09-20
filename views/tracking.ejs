@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+<div class="page-heading">
+  <p class="eyebrow">THEO DÕI HỖ TRỢ</p>
+  <h1>Tra cứu yêu cầu</h1>
+  <p>Chỉ cần nhập số điện thoại đã dùng khi gửi yêu cầu cứu hộ.</p>
+</div>
+<form class="panel tracking-form" method="post" action="/tracking"><input type="hidden" name="_csrf"
+    value="<%= csrf %>">
+  <div><label for="phone" class="form-label">Số điện thoại</label><input id="phone" name="SoDienThoai"
+      class="form-control" type="tel" pattern="(0[0-9]{9}|\+84[0-9]{9})"
+      value="<%= values.SoDienThoai || '' %>" placeholder="Số điện thoại đã gửi" required></div><button
+    class="btn btn-rescue">Tra cứu yêu cầu →</button>
+</form>
+<% if (requests.length) { %>
+<section class="panel table-panel mt-4">
+  <div class="p-3"><h2 class="mb-0">Tìm thấy <%= requests.length %> yêu cầu</h2><p class="mb-0">Yêu cầu mới nhất ở đầu danh sách. Chọn “Xem chi tiết” để xem vị trí và tiến độ.</p></div>
+  <div class="table-responsive"><table class="table align-middle mb-0">
+    <thead><tr><th>Mã yêu cầu</th><th>Sự cố</th><th>Thời gian gửi</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <tbody><% requests.forEach(item => { %>
+      <tr><td>#<%= item.MaYeuCau %></td><td><%= item.TenLoai %></td><td><%= formatDate(item.ThoiGianGui) %></td>
+        <td><span class="status-badge status-<%= item.TrangThai %>"><%= statuses[item.TrangThai] %></span></td>
+        <td><form method="post" action="/tracking#request-detail">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <input type="hidden" name="SoDienThoai" value="<%= values.SoDienThoai %>">
+          <input type="hidden" name="MaYeuCau" value="<%= item.MaYeuCau %>">
+          <button class="btn btn-sm btn-location">Xem chi tiết</button>
+        </form></td>
+      </tr>
+    <% }) %></tbody>
+  </table></div>
+</section>
+<% } %>
+<% if (request) { %><div class="tracking-result" id="request-detail"><%- include('partials/request-info') %><p
+    class="text-secondary mt-3">Gửi lại biểu mẫu tra cứu để xem trạng thái mới nhất.</p>
+</div><% } else if (searched) { %><div class="empty-state" role="status">
+  <h2>Không tìm thấy yêu cầu phù hợp.</h2>
+  <p>Vui lòng kiểm tra lại số điện thoại hoặc chọn yêu cầu trong danh sách kết quả.</p>
+</div><% } else { %><div class="empty-state"><span class="empty-symbol" aria-hidden="true">⌕</span>
+  <h2>Tiến độ cứu hộ trong tầm tay</h2>
+  <p>Trạng thái và nhân viên phụ trách sẽ hiển thị tại đây.</p>
+</div><% } %>
+<%- include('partials/footer') %>

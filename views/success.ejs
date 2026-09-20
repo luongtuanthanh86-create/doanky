@@ -1,0 +1,10 @@
+<%- include('partials/header') %>
+<div class="success-banner"><span class="success-icon" aria-hidden="true">✓</span>
+  <div>
+    <h2>Đã gửi yêu cầu cứu hộ</h2>
+    <p>Yêu cầu của bạn là <strong>#<%= request.MaYeuCau %></strong>. Chỉ cần nhập <strong>số điện thoại
+        <%= request.SoDienThoai %></strong> để tra cứu sau.</p>
+  </div><a href="/tracking" class="btn btn-light">Tra cứu trạng thái →</a>
+</div>
+<%- include('partials/request-info') %>
+<%- include('partials/footer') %>

@@ -1,0 +1,24 @@
+<div class="page-heading">
+  <p class="eyebrow"><%= user.vaiTro === 'admin' ? 'QUẢN TRỊ HỆ THỐNG' : 'ĐIỀU PHỐI CỨU HỘ' %></p>
+  <h1><%= title %></h1>
+  <p>Xin chào <%= user.hoTen %>. Đây là tình hình yêu cầu cứu hộ toàn hệ thống.</p>
+</div>
+<% const base = user.vaiTro === 'admin' ? '/admin' : '/staff'; %>
+<% if (user.vaiTro === 'admin') { %><div class="summary-bar">
+  <div><span>Tổng yêu cầu</span><strong><%= Object.values(counts).reduce((sum,n) => sum+n,0) %></strong></div>
+  <div><span>Nhân viên cứu hộ</span><strong><%= staffCount %></strong></div>
+  <div><span>Loại sự cố</span><strong><%= typeCount %></strong></div>
+</div><% } %>
+<div class="row g-3"><% Object.keys(statuses).forEach((key,index) => { %><div class="col-sm-6 col-xl-3"><a
+      class="panel stat-card" href="<%= base %>/requests?status=<%= key %>"><span
+        class="status-badge status-<%= key %>"><%= statuses[key] %></span><strong><%= counts[key] %></strong><span
+        class="stat-link">Xem yêu cầu <span aria-hidden="true">↗</span></span></a></div><% }) %></div>
+<section class="panel dashboard-guide">
+  <div>
+    <p class="eyebrow">QUY TRÌNH XỬ LÝ</p>
+    <h2>Mỗi yêu cầu, một hành trình hỗ trợ</h2>
+    <p>
+      <%= user.vaiTro === 'admin' ? 'Theo dõi yêu cầu, quản lý nhân viên và các loại sự cố trong hệ thống.' : 'Chọn yêu cầu đang chờ để tiếp nhận. Chỉ nhân viên phụ trách được cập nhật tiến độ.' %>
+    </p>
+  </div><a href="<%= base %>/requests" class="btn btn-location">Mở danh sách yêu cầu →</a>
+</section>
