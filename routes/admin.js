@@ -12,6 +12,7 @@ const {
   flash,
 } = require('../lib/helpers');
 router.use(requireLogin, requireAdmin);
+router.use('/stations', require('./stations-admin'));
 router.param('id', (req, res, next, id) =>
   validId(id) ? next() : fail(res, 400, 'ID không hợp lệ.'),
 );
