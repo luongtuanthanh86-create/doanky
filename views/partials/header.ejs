@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/support.css">
     <script src="/vendor/leaflet/leaflet.js" defer></script>
     <script src="/js/app.js?v=20260915-2" defer></script>
   </head>
@@ -19,22 +20,22 @@
         <a href="/" class="brand"><span class="brand-mark" aria-hidden="true">+</span><span>CỨU HỘ
             <b>VIỆT</b><small>HỖ TRỢ GIAO THÔNG</small></span></a>
         <nav aria-label="Điều hướng chính" class="main-nav">
-          <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Yêu cầu cứu hộ</a>
+          <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Kết nối cứu hộ</a>
           <a href="/tracking" class="<%= currentPath === '/tracking' ? 'active' : '' %>">Tra cứu yêu cầu</a>
-          <% if (user) { %><a href="/<%= user.vaiTro === 'admin' ? 'admin' : 'staff' %>/dashboard"
-            class="nav-login">Không gian làm việc ↗</a>
+          <% if (user) { %><a href="/support/desk"
+            class="nav-login">Tiếp nhận & điều phối ↗</a>
           <% } else { %><a href="/login" class="nav-login">Đăng nhập nhân viên ↗</a><% } %>
         </nav>
       </div>
     </header>
     <main id="main" class="container page-main">
-      <% if (user && (currentPath.startsWith('/admin') || currentPath.startsWith('/staff'))) { const base = user.vaiTro === 'admin' ? '/admin' : '/staff'; %>
+      <% if (user && (currentPath.startsWith('/admin') || currentPath.startsWith('/staff') || currentPath.startsWith('/support/desk'))) { const base = user.vaiTro === 'admin' ? '/admin' : '/staff'; %>
       <div class="workspace-nav">
-        <div class="workspace-links"><a href="<%= base %>/dashboard"
+        <div class="workspace-links"><a href="/support/desk">Điều phối trực tiếp</a><a href="<%= base %>/dashboard"
             class="<%= currentPath.endsWith('/dashboard') ? 'selected' : '' %>">Tổng quan</a><a
             href="<%= base %>/requests" class="<%= currentPath.includes('/requests') ? 'selected' : '' %>">Yêu
             cầu cứu hộ</a>
-          <% if (user.vaiTro === 'admin') { %><a href="/admin/users"
+          <% if (user.vaiTro === 'admin') { %><a href="/admin/stations">Điểm cứu hộ</a><a href="/admin/users"
             class="<%= currentPath.includes('/users') ? 'selected' : '' %>">Nhân viên</a><a
             href="/admin/incident-types"
             class="<%= currentPath.includes('/incident-types') ? 'selected' : '' %>">Loại sự cố</a><% } %>
