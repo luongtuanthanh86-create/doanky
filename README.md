@@ -230,7 +230,7 @@ Khi cập nhật trạng thái, SQL đồng thời yêu cầu đúng `MaNhanVien
 - Không hiển thị stack trace cho người dùng. Lỗi database có trang thông báo.
 - Tracking chỉ yêu cầu SĐT theo thay đổi nghiệp vụ. Người biết SĐT có thể xem các yêu cầu của số đó; không có OTP xác minh quyền sở hữu. Mã chọn chi tiết luôn được đối chiếu với SĐT ở server. Trang xác nhận vẫn yêu cầu phiên đã gửi.
 
-Session và giới hạn truy cập lưu trong bộ nhớ để giữ đúng ba bảng chính và code đơn giản. Khởi động lại server sẽ đăng xuất; dữ liệu cứu hộ trong MySQL vẫn còn. Thiết kế dành cho demo một tiến trình. Nếu triển khai production cần HTTPS, secret riêng, session store bền vững và cấu hình proxy phù hợp. `NODE_ENV=production` bật cookie secure nên không đăng nhập qua HTTP localhost ở chế độ này.
+Session được lưu trong bảng PhienTruyCap trên MySQL, giữ được khi khởi động lại nếu SESSION_SECRET không đổi. Giới hạn truy cập và signaling cuộc gọi vẫn dùng bộ nhớ của một tiến trình. Nếu triển khai production cần HTTPS, secret riêng và cấu hình proxy phù hợp. `NODE_ENV=production` bật cookie secure nên không đăng nhập qua HTTP localhost ở chế độ này.
 
 ## 8. Kiểm thử
 
@@ -269,7 +269,7 @@ Nút lấy vị trí thử chế độ chính xác cao trong 10 giây. Nếu kh�
 | Nền bản đồ báo 403                         | Không chặn Referer; ứng dụng đã đặt `strict-origin-when-cross-origin`. Kiểm tra tiện ích trình duyệt/mạng nếu vẫn lỗi. |
 | Tên sự cố cũ thay đổi sau khi sửa danh mục | Yêu cầu tham chiếu danh mục qua khóa ngoại, tên được JOIN lúc xem.                                                     |
 
-Lưu ý thời gian do `NOW()` của server database cung cấp. Khi demo tại Việt Nam, cấu hình múi giờ hệ điều hành/database nhất quán. Dữ liệu tọa độ chỉ gửi khi submit; không có theo dõi GPS liên tục.
+Lưu ý thời gian do `NOW()` của server database cung cấp. Khi demo tại Việt Nam, cấu hình múi giờ hệ điều hành/database nhất quán. Tọa độ được gửi khi khách bấm Gọi thoại (sau khi cấp quyền vị trí), hoặc gửi thủ công từ bản đồ; không có theo dõi GPS liên tục.
 
 ## 10. Tài liệu tham khảo
 
@@ -279,3 +279,13 @@ Lưu ý thời gian do `NOW()` của server database cung cấp. Khi demo tại 
 - [Chính sách OpenStreetMap tiles](https://operations.osmfoundation.org/policies/tiles/): attribution, Referer và bộ nhớ đệm.
 
 Không tải bản đồ hàng loạt, không thêm proxy để né chính sách của nhà cung cấp. Đường dẫn Google Maps chỉ mở trang bản đồ, không gọi Google Maps JavaScript API.
+
+## Cập nhật hỗ trợ trực tiếp (02/10/2026)
+Trang chủ mới kết nối nhanh, phòng chat/ảnh/ghi âm, vị trí, ca trực và điều phối có xác nhận chi phí. Xem `HUONG-DAN-HO-TRO-MOI.md` để cập nhật database, cấu hình hotline và demo hai vai trò. Các mô tả ba bảng/bốn trạng thái ở phần cũ chỉ áp dụng luồng biểu mẫu trước đây.
+
+## Bản cập nhật 05/10/2026
+- Điều phối trạm gần nhất quanh Hà Nội; trạm cử nhân viên và xe của trạm.
+- Quy trình 5 bước: Yêu cầu → Giao trạm → Cử xe → Đang hỗ trợ → Hoàn thành.
+- Khách bấm Gọi thoại sẽ tự lấy và gửi vị trí. GPS lỗi không chặn cuộc gọi; vị trí đã giao trạm được giữ nguyên.
+- Sau khi tạo `.env` từ `.env.example` và import `database.sql`, chạy `npm install`, `npm run migrate`, `npm run seed`, `npm run seed:stations`, rồi `npm run dev`.
+- Xem `DIEU-PHOI-TRAM.md` và `GOI-THOAI.md` để thử các vai trò. Chỉ có `.env.example` trong kho; tự cấu hình mật khẩu database và SESSION_SECRET trên máy chạy.

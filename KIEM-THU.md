@@ -90,3 +90,25 @@ Database test có tên sinh tự động và được xóa sau khi kết thúc. 
 - Nền OpenStreetMap phụ thuộc kết nối mạng và dịch vụ bên ngoài. Bootstrap, Leaflet và ảnh marker phục vụ từ project.
 - Session dùng MemoryStore phù hợp đồ án: khởi động lại server mất đăng nhập nhưng yêu cầu MySQL được giữ nguyên.
 - Preview chạy bằng node trực tiếp vì giới hạn sandbox; trên máy cá nhân chạy theo README với MySQL và `npm run dev`.
+
+## 02/10/2026 — Luồng kết nối và điều phối mới
+- Chạy trên database thử riêng ở MariaDB 10.4, cổng 3317; không sửa dữ liệu thật ở cổng 3306. MySQL thật đang tắt tại thời điểm kiểm tra.
+- geolocation.test.js: 7/7; integration.test.js: 10/10 gồm nhóm cha; support.test.js: 8/8 gồm nhóm cha. Tổng đầu ra test runner: 25 đạt, 0 lỗi.
+- Luồng mới đã thử: tạo không cần thông tin, chống tạo trùng, bảo vệ phiên/media, chặn tệp sai, tiếp nhận đồng thời, bắt buộc xác minh thông tin trước phương án, chống giao trùng nhân viên, sửa phương án, xác nhận đúng phiên bản, SSE, đúng nhân viên và thứ tự trạng thái, khóa tài khoản.
+- Đã thao tác trình duyệt thật qua hai origin localhost/127.0.0.1 để tách phiên: khách tạo phòng, gửi chat, lưu địa chỉ/xe/sự cố; nhân viên bật ca, tiếp nhận, gửi phương án; khách nhận cập nhật và đồng ý; nút xuất phát xuất hiện bên nhân viên.
+- Kiểm tra cú pháp JavaScript và git diff --check đạt. npm test trong sandbox bị spawn EPERM; chạy từng file test trực tiếp với node đều đạt.
+- Chưa thử ghi âm microphone và GPS trên thiết bị vật lý. Có giao diện xin quyền, thông báo lỗi và phương án nhập địa chỉ/nhắn tin. Không xác nhận kết quả GPS thật hoặc cuộc gọi điện thoại.
+# Kiểm thử bổ sung gọi thoại — 02/10/2026
+
+- `node tests/voice.test.js`: 3 kịch bản tích hợp đạt (4 mục tính cả nhóm), dùng CSDL thử riêng ở cổng 3317 và tự dọn. Kiểm tra CSRF, quyền phiên khách, người tiếp nhận, không lộ SDP cho nhân viên khác, chống chiếm cuộc gọi ở thẻ khác, gọi đồng thời, nhận/từ chối/kết thúc, cấm gọi trong phiên đã hủy.
+- `node tests/voice-client.test.js`: 3 kiểm thử đạt với thiết bị/RTCPeerConnection mô phỏng. Kiểm tra từ chối microphone, offer/answer, tắt mic, dừng track, không tự bật mic khi có cuộc gọi đến.
+- `node tests/support.test.js`: 8 mục đạt (gồm nhóm), chức năng hỗ trợ cũ không bị ảnh hưởng.
+- Đã mở phòng hỗ trợ trong trình duyệt và kiểm tra giao diện nút gọi. Chưa kiểm chứng âm thanh thật giữa hai thiết bị hoặc kết nối qua TURN thực. Không coi kiểm thử mô phỏng là kiểm thử âm thanh thực tế.
+
+## Sửa liên lạc 02/10/2026
+
+Đã xác nhận hai thẻ ban đầu khác phòng (#4 và #1), nhân viên hết phiên. Kiểm thử UI gửi khách → nhân viên và nhân viên → khách đạt trong cùng phòng #4; sau sửa lưu session kiểm thử hai chiều lại trong phòng #7 đạt. Thêm nút tiếp nhận ở đầu trang, hướng dẫn mã phòng, đường dẫn đăng nhập lại. Microphone trong trình duyệt tích hợp hết thời gian chờ cấp quyền, chưa xác nhận âm thanh thật.
+
+Kiểm thử voice.test.js đạt 5 mục (gồm nhóm), support.test.js đạt 8, integration.test.js đạt 10, voice-client.test.js đạt 3. Bao gồm lưu/đọc lại session qua hai instance độc lập, hết hạn và đăng xuất.
+
+Đã khởi động lại tiến trình preview thật và tải lại cả hai thẻ: khách và nhân viên vẫn ở phòng #7, ô nhắn tin vẫn hoạt động, lịch sử tin nhắn còn nguyên.
