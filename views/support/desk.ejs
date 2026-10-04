@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<div id="support-app" data-view="desk" data-csrf="<%= csrf %>">
+  <div class="support-heading">
+    <div>
+      <p class="eyebrow">TRUNG TÂM HỖ TRỢ</p>
+      <h1 id="desk-title">Yêu cầu cứu hộ</h1>
+      <p><span id="desk-guidance">Điều phối giao trạm; trạm cử xe và nhân viên đến hiện trường.</span></p>
+    </div><span class="connection" id="connection">Đang kết nối…</span>
+  </div>
+  <div id="support-error" role="alert"></div>
+  <div class="desk-summary" id="desk-summary"></div>
+  <div class="support-heading">
+    <h2>Hàng đợi hỗ trợ</h2><label>Lọc trạng thái <select id="desk-filter">
+        <option value="active">Đang xử lý</option>
+        <option value="waiting">Chờ tiếp nhận</option>
+        <option value="mine">Tôi phụ trách</option>
+        <option value="all">Tất cả trong danh sách</option>
+      </select></label>
+  </div>
+  <button id="enable-sound" class="btn btn-light">Bật âm báo yêu cầu
+      mới</button>
+  <div id="desk-requests" class="desk-requests"></div>
+  <details class="support-card duty-card"><summary>Ca trực và khu vực phụ trách</summary>
+    <form id="duty-form"><label>Khu vực phụ trách<input name="area" maxlength="150"
+          placeholder="Quận/huyện, tuyến đường…"></label><label>Khả năng / phương tiện<input name="capability"
+          maxlength="150" placeholder="Xe máy, kích bình, xe kéo…"></label><label class="duty-toggle"><input
+          name="available" type="checkbox"> Sẵn sàng nhận điều phối</label><button class="btn btn-primary">Cập
+        nhật ca trực</button></form>
+    <p class="muted small">Điều phối viên cần giữ trang mở. Nhân viên thuộc trạm bật sẵn sàng khi nhận ca và tắt khi hết ca; phụ trách trạm kiểm tra khả năng trước khi giao.</p>
+  </details>
+  <details class="support-card"><summary>Xem đội cứu hộ</summary><div id="team-list" class="team-list"></div></details>
+  <p class="muted small">Danh sách tối đa 150 phiên gần nhất; phiên hoàn tất/hủy hiển thị trong 24 giờ. Yêu
+    cầu từ biểu mẫu cũ nằm ở mục “Yêu cầu cứu hộ” trong thanh quản lý.</p>
+</div>
+<script src="/js/support.js" defer></script>
+<%- include('../partials/footer') %>

@@ -1,0 +1,24 @@
+<%- include('../partials/header') %>
+<div id="support-app" data-view="home" data-csrf="<%= csrf %>">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <% if (typeof roomExpired !== 'undefined' && roomExpired) { %><div class="support-notice" role="status">Phòng cũ không thuộc phiên hiện tại. Bấm “Yêu cầu cứu hộ” để mở phòng của bạn.</div><% } %>
+  <section class="simple-home">
+    <span class="home-icon" aria-hidden="true">+</span>
+    <h1>Bạn cần cứu hộ?</h1>
+    <p>Nhắn tin hoặc gọi cho nhân viên để được hỗ trợ.</p>
+    <button class="btn btn-primary home-start" id="start-support">Yêu cầu cứu hộ</button>
+    <p class="muted">Không cần đăng ký hay điền thông tin trước.</p>
+    <div id="support-error" role="alert"></div>
+    <% if(supportConfig.hotline){ %><a class="btn rescue-call" href="tel:<%= supportConfig.hotline %>">Gọi tổng đài: <%= supportConfig.hotline %></a><% } %>
+    <div class="home-secondary"><a href="/tracking">Tra cứu yêu cầu</a><a href="/request-form">Gửi yêu cầu chi tiết</a></div>
+  </section>
+  <section class="simple-help" aria-label="Cách yêu cầu cứu hộ">
+    <div><b>1. Kết nối</b><p>Bấm yêu cầu cứu hộ.</p></div>
+    <div><b>2. Trao đổi</b><p>Nhắn tin, gọi và gửi vị trí.</p></div>
+    <div><b>3. Xác nhận</b><p>Đồng ý phương án trước khi xe đến.</p></div>
+  </section>
+  <details class="simple-info"><summary>Khu vực và thời gian phục vụ</summary><p><%= supportConfig.area %></p><p><%= supportConfig.hours %></p></details>
+  <p class="muted simple-footnote">Thời gian phản hồi tùy nhân viên đang trực. Nếu có người bị thương hoặc nguy hiểm tức thì, hãy liên hệ dịch vụ khẩn cấp phù hợp.</p>
+</div>
+<script src="/js/support.js" defer></script>
+<%- include('../partials/footer') %>

@@ -1,0 +1,126 @@
+<%- include('../partials/header') %>
+<div id="support-app" data-view="room" data-id="<%= supportId %>" data-staff="<%= staffMode %>"
+  data-csrf="<%= csrf %>">
+  <div class="support-heading">
+    <div>
+      <p class="eyebrow"><%= staffMode ? 'YÊU CẦU CỨU HỘ' : 'HỖ TRỢ CỦA BẠN' %> / #<%= supportId %>
+      </p>
+      <h1 id="room-state">Đang tải phiên hỗ trợ…</h1>
+
+    </div><span class="connection" id="connection" role="status">Đang kết nối…</span>
+  </div>
+  <div id="support-error" role="alert"></div>
+  <div id="session-recovery" class="support-notice" hidden>Phiên làm việc đã hết hạn.
+    <a href="<%= staffMode ? '/login' : '/' %>"><%= staffMode ? 'Đăng nhập lại để tiếp tục' : 'Về trang chủ để kết nối lại' %></a>
+  </div>
+  <% if(staffMode){ %><div id="claim-notice" class="support-notice" hidden>
+    Bạn đang xem phòng #<%= supportId %>. Bấm tiếp nhận để trả lời và nghe cuộc gọi.
+    <button id="claim-top" type="button" class="btn btn-primary">Tiếp nhận phòng #<%= supportId %></button>
+  </div><% } %>
+  <p class="muted" id="chat-guidance">Hai bên cần mở cùng mã phòng #<%= supportId %> để nhắn tin và gọi cho nhau.</p>
+  <div id="wait-notice" class="support-notice" hidden>Chưa có nhân viên tiếp nhận. Bạn có thể gửi thêm vị trí
+    và tình trạng; yêu cầu này chưa đồng nghĩa với việc đã có xe xuất phát. <% if(supportConfig.hotline){ %><a
+      href="tel:<%= supportConfig.hotline %>">Gọi trực tiếp <%= supportConfig.hotline %></a><% } %></div>
+  <details class="simple-progress" open><summary>Theo dõi cứu hộ</summary><p id="room-subtitle"></p><div id="progress-steps" class="support-progress" aria-label="Tiến trình cứu hộ"></div></details>
+  <div class="support-grid">
+    <section class="support-card chat-card">
+      <div class="card-heading">
+        <h2>Nhắn tin và gọi</h2><span id="dispatcher-name">Chờ người tiếp nhận</span>
+      </div>
+      <section class="voice-panel" aria-label="Gọi thoại trực tiếp">
+        <strong>Gọi cho <%= staffMode ? 'khách hàng' : 'nhân viên' %></strong>
+        <p id="voice-status" role="status">Gọi bằng Internet, không cần số điện thoại.</p>
+        <div class="voice-actions">
+          <button type="button" id="voice-start" class="btn btn-primary" disabled>Gọi thoại</button>
+          <button type="button" id="voice-accept" class="btn btn-success" hidden>Nghe cuộc gọi</button>
+          <button type="button" id="voice-mute" class="btn btn-light" hidden>Tắt mic</button>
+          <button type="button" id="voice-end" class="btn btn-danger" hidden>Kết thúc</button>
+          <button type="button" id="voice-sound" class="btn btn-sm btn-outline-secondary">Bật chuông</button>
+        </div>
+        <audio id="voice-remote" autoplay controls hidden aria-label="Âm thanh cuộc gọi"></audio>
+        <small>Cho phép microphone khi trình duyệt hỏi.</small>
+        <% if (!staffMode) { %><p id="call-location-status" role="status" class="muted">Bấm Gọi thoại sẽ tự lấy và gửi vị trí. Cho phép định vị khi trình duyệt hỏi.</p><% } %>
+      </section>
+      <button type="button" id="open-location" class="btn btn-outline-primary mb-2"><%= staffMode ? 'Xem vị trí khách' : 'Gửi vị trí của tôi' %></button>
+      <p id="shared-location" class="muted" role="status">Khách chưa gửi vị trí.</p>
+      <section class="nearest-card" aria-label="Trạm được điều phối"><strong>Trạm và xe phục vụ</strong><div id="assigned-station" role="status">Chưa giao cho trạm.</div></section>
+      <section class="nearest-card" aria-label="Điểm cứu hộ gần nhất">
+        <strong>Điểm cứu hộ gần nhất</strong>
+        <div id="nearest-station" role="status">Gửi vị trí để hệ thống tự chọn điểm gần nhất.</div>
+      </section>
+      <a id="location-directions" class="mb-2" target="_blank" rel="noopener noreferrer" hidden>Mở chỉ đường trên Google Maps</a>
+      <div id="messages" class="chat-messages" aria-live="polite" aria-relevant="additions"></div>
+      <form id="message-form" class="chat-compose"><label class="visually-hidden" for="chat-text">Tin
+          nhắn</label><textarea id="chat-text" maxlength="2000" rows="2"
+          placeholder="Nhập tin nhắn…"></textarea>
+        <div class="compose-tools"><label class="file-button">Đính kèm tệp<input id="attachment"
+              type="file" accept="image/jpeg,image/png,image/webp,audio/webm,audio/ogg,audio/mp4"
+              hidden></label><button type="button" id="record-audio" class="btn btn-light">● Ghi
+            âm</button><button class="btn btn-primary" id="send-message">Gửi</button></div>
+        <div id="attachment-preview" class="muted" aria-live="polite"></div><button type="button"
+          id="remove-attachment" class="btn btn-sm btn-light" hidden>Bỏ tệp</button>
+        <p class="muted small">Tệp tối đa 512 KB. Ghi âm tối đa 45 giây. Nhấn Gửi để chia sẻ.</p>
+      </form>
+    </section>
+    <aside class="support-sidebar">
+      <section class="support-card" id="proposal-card" hidden>
+        <p class="eyebrow">PHƯƠNG ÁN HỖ TRỢ</p>
+        <div id="proposal-content"></div>
+        <div id="proposal-actions"></div>
+      </section>
+      <details class="support-card location-details" id="location-panel" <%= staffMode ? 'open' : '' %>>
+        <summary><%= staffMode ? 'Vị trí khách và tình trạng xe' : 'Gửi vị trí và tình trạng xe' %><span><%= staffMode ? 'Cập nhật khi khách gửi' : 'Lấy vị trí → kiểm tra điểm → bấm gửi' %></span></summary>
+        <div class="card-heading location-heading">
+          <h2>Vị trí của khách</h2><button id="locate" <%= staffMode ? 'hidden' : '' %>
+            class="btn btn-primary" type="button">1. Lấy vị trí hiện tại</button>
+        </div>
+        <div id="support-map" aria-label="Bản đồ vị trí cứu hộ"></div>
+        <p id="location-status" role="status" class="muted">Chọn điểm trên bản đồ hoặc mô tả địa chỉ bên dưới.
+        </p>
+        <form id="details-form">
+          <details class="coordinate-details"><summary>Nhập tọa độ thủ công</summary><div class="coordinate-row"><label>Vĩ độ<input name="lat" type="number" step="any" min="-90"
+                max="90"></label><label>Kinh độ<input name="lng" type="number" step="any" min="-180"
+                max="180"></label></div></details><label>Địa chỉ / điểm dễ nhận biết<input name="locationText"
+              maxlength="500" placeholder="Tên đường, cột mốc, chiều di chuyển…"></label><label>Loại xe<select
+              name="vehicle">
+              <option value="">Chưa xác định</option>
+              <option>Xe máy</option>
+              <option>Ô tô</option>
+              <option>Xe tải</option>
+              <option>Xe khách</option>
+              <option>Phương tiện khác</option>
+            </select></label><label>Tình trạng xe<input name="issue" maxlength="500"
+              placeholder="Ví dụ: xe không nổ máy"></label><label>Số điện thoại gọi lại (không bắt buộc)<input
+              name="phone" type="tel" maxlength="15" autocomplete="tel"></label><button
+            class="btn btn-primary w-100"><%= staffMode ? 'Lưu thông tin vị trí' : '2. Gửi vị trí / thông tin cho nhân viên' %></button>
+        </form>
+      </details>
+      <% if(staffMode){ %><section class="support-card">
+        <h2>Thao tác nhân viên</h2>
+        <div id="staff-actions"></div>
+        <form id="dispatch-form" hidden><h3>Giao yêu cầu cho trạm</h3><label>Trạm cứu hộ<select name="stationId" id="dispatch-station" required></select></label><label>Lý do nếu chọn trạm khác<input name="reason" maxlength="500" placeholder="Ví dụ: trạm gần nhất hết xe kéo"></label><button class="btn btn-primary w-100">Giao yêu cầu cho trạm</button></form>
+        <form id="station-decline-form" hidden><label>Lý do trạm từ chối<input name="reason" maxlength="500" required placeholder="Hết xe, không xử lý được sự cố…"></label><button class="btn btn-outline-primary">Từ chối và trả về điều phối</button></form>
+        <form id="proposal-form" hidden><h3>Cử xe cứu hộ</h3><p class="muted">Chọn người, xe và gửi phương án để tiếp nhận yêu cầu trong một lần.</p><label>Loại xe của khách<select name="customerVehicle" id="proposal-customer-vehicle" required><option value="">Chọn loại xe</option><option>Xe máy</option><option>Ô tô</option><option>Xe tải</option><option>Xe khách</option><option>Phương tiện khác</option></select></label><label>Tình trạng xe của khách<input name="customerIssue" id="proposal-customer-issue" maxlength="500" required placeholder="Ví dụ: xe không nổ máy"></label><label>Nhân viên đến hiện trường<select name="technician"
+              id="technician-select" required></select></label><label id="rescue-vehicle-label" hidden>Xe cứu hộ của trạm<select name="stationVehicleId" id="rescue-vehicle-select"></select></label><label>Phương án hỗ trợ<textarea name="plan"
+              maxlength="2000" required placeholder="Sửa tại chỗ, kích bình hoặc kéo xe…"></textarea></label>
+          <div class="coordinate-row"><label>Đến sau (phút)<input name="eta" type="number" min="1" max="1440"
+                required></label><label>Chi phí dự kiến (đ)<input name="price" type="number" min="0"
+                max="100000000" step="1000" required></label></div><label>Chi phí gồm những gì?<textarea
+              name="priceNote" maxlength="500" required
+              placeholder="Phí di chuyển/kiểm tra; phụ tùng báo riêng trước khi sửa…"></textarea></label><button
+            class="btn btn-primary w-100">Nhận yêu cầu & gửi phương án</button>
+        </form><a href="/support/desk">← Về bảng điều phối</a>
+      </section><% } %>
+      <section class="support-card">
+        <div id="cancel-actions"></div><% if(supportConfig.hotline){ %><a class="btn rescue-call w-100"
+          href="tel:<%= supportConfig.hotline %>">Gọi trực tiếp · <%= supportConfig.hotline %></a><% } %><p
+          class="muted small">Giữ trang này mở để nhận tin nhắn và cuộc gọi.</p>
+      </section>
+    </aside>
+  </div>
+</div>
+<script src="/js/nearest-station.js" defer></script>
+<script src="/js/location-helper.js" defer></script>
+<script src="/js/support.js" defer></script>
+<script src="/js/voice-call.js" defer></script>
+<%- include('../partials/footer') %>
