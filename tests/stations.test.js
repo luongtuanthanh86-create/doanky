@@ -385,9 +385,16 @@ test("Quản trị điểm cứu hộ và khách/nhân viên cùng nhận điể
     ).status,
     200,
   );
+  // The station manager may update the assigned technician's journey.
+  await conn.execute("INSERT INTO TaiKhoan(TenDangNhap,MatKhau,HoTen,VaiTro) VALUES('boss',?,'Station boss','nhanvien'),('observer',?,'Station observer','nhanvien')",[hash,hash]);
+  const [extra]=await conn.query("SELECT MaTaiKhoan id,TenDangNhap username FROM TaiKhoan WHERE TenDangNhap IN ('boss','observer')");
+  for(const person of extra) await conn.execute("INSERT INTO NhanVienTram(accountId,stationId,manager) VALUES(?,?,?)",[person.id,home.id,person.username==='boss'?1:0]);
+  const boss=client(),observer=client();await boss.login('boss');await observer.login('observer');
+  assert.equal((await observer.req('/support/api/staff/'+id+'/action',{action:'enroute'})).status,403);
+  assert.equal((await boss.req('/support/api/staff/'+id+'/action',{action:'helping'})).status,409);
   for (const action of ["enroute", "helping", "complete"])
     assert.equal(
-      (await staff.req("/support/api/staff/" + id + "/action", { action }))
+      (await (action === "helping" ? staff : boss).req("/support/api/staff/" + id + "/action", { action }))
         .status,
       200,
     );
