@@ -16,6 +16,18 @@ if (
 app.disable("x-powered-by");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+// Error pages must render even when body parsing or the session store fails.
+app.use((req, res, next) => {
+  Object.assign(res.locals, helpers, {
+    user: null,
+    currentPath: req.path,
+    csrf: "",
+    errors: [],
+    values: {},
+    flash: null,
+  });
+  next();
+});
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   "/vendor/bootstrap",
