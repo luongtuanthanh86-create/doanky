@@ -516,9 +516,9 @@ for (const prefix of ["/api/guest", "/api/staff"]) {
             return;
           }
           if (["enroute", "helping", "complete"].includes(action)) {
-            if (req.actor.role !== "admin" && req.actor.id !== row.technician)
+            if (!stationManager(req, row) && req.actor.id !== row.technician)
               throw bad(
-                "Chỉ nhân viên được điều phối mới được cập nhật hành trình.",
+                "Chỉ nhân viên được điều phối hoặc phụ trách trạm được giao mới được cập nhật hành trình.",
                 403,
               );
             const previous = {
