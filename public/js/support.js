@@ -1067,7 +1067,7 @@
       }[r.state];
       if (
         next &&
-        (data.actor?.role === "admin" || data.actor?.id === r.technician)
+        (stationManager || data.actor?.id === r.technician)
       )
         actionButton(a, ...next);
     }
